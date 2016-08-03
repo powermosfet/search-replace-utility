@@ -3,7 +3,7 @@ command line utility to do mass-replacements in textfiles
 
 ##Usage:
 
-    $ python replace.py <filename>
+    $ python rename.py [-h] [-p PATTERN] replacementsfile filename
 
-The script requires a file named `replace.txt`, containing key-value pairs separated by space.
+The script use a dictionary file containing key-value pairs separated by space.
 The results will be written to a file named `OUT_<filename>`
