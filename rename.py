@@ -40,7 +40,7 @@ with open(filename) as infile, open("OUT_" + filename, 'w') as outfile:
         if pattern:
             for match in [ m.lower() for m in sorted(set(re.findall(pattern, line))) \
                                                         if m.lower() not in ignorewords]:
-                rep = input("Enter a replacement for '{}': ".format(match)).lower()
+                rep = input("Enter a replacement for '{}' (blank to ignore): ".format(match)).lower()
                 if not rep:
                     ignorewords.append(match)
                     continue
