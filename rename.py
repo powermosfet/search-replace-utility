@@ -37,14 +37,16 @@ with open(filename) as infile, open("OUT_" + filename, 'w') as outfile:
     for line in infile:
         for key in replacements:
             line = sub(key, replacements[key], line)
+        print("{:<10}".format(replaceCount), end="\r")
         if pattern:
             for match in [ m.lower() for m in sorted(set(re.findall(pattern, line))) \
                                                         if m.lower() not in ignorewords]:
-                rep = input("Enter a replacement for '{}' (blank to ignore): ".format(match)).lower()
+                rep = input("\n{}\nEnter a replacement for '{}' (blank to ignore): ".format(line, match)).lower()
                 if not rep:
                     ignorewords.append(match)
                     continue
                 replacements[match] = rep
+                newReplacements += 1
                 line = sub(match, rep, line)
         outfile.write(line)
     print("Performed {} replacements in {}.".format(replaceCount, filename))
