@@ -15,13 +15,13 @@ ignorewords = []
 replaceCount = 0
 newReplacements = 0
 
-def sub(this, that, line):
+def sub(this, that, contents):
     global replaceCount
-    repLine = line
+    subContents = contents
     for a, b in [(this, that), (this.upper(), that.upper())]:
-        repLine, n = re.subn(r"\b{}\b".format(a), b, repLine)    
+        subContents, n = re.subn(r"\b{}\b".format(a), b, subContents)    
         replaceCount += n
-    return repLine
+    return subContents
 
 with open(replacementFilename, 'r') as r:
     for line in r:
@@ -34,21 +34,21 @@ with open(replacementFilename, 'r') as r:
 print("Loaded {} replacements from {}".format(len(replacements), replacementFilename))
                 
 with open(filename) as infile, open("OUT_" + filename, 'w') as outfile:
-    for line in infile:
-        for key in replacements:
-            line = sub(key, replacements[key], line)
+    contents = infile.read()
+    for key in replacements:
+        contents = sub(key, replacements[key], contents)
         print("{:<10}".format(replaceCount), end="\r")
-        if pattern:
-            for match in [ m.lower() for m in sorted(set(re.findall(pattern, line))) \
-                                                        if m.lower() not in ignorewords]:
-                rep = input("\n{}\nEnter a replacement for '{}' (blank to ignore): ".format(line, match)).lower()
-                if not rep:
-                    ignorewords.append(match)
-                    continue
-                replacements[match] = rep
-                newReplacements += 1
-                line = sub(match, rep, line)
-        outfile.write(line)
+    if pattern:
+        for match in [ m for m in sorted(set(map(lambda c: c.lower(), re.findall(pattern, contents)))) \
+                                                    if m not in ignorewords]:
+            rep = input("Enter a replacement for '{}' (blank to ignore): ".format(match)).lower()
+            if not rep:
+                ignorewords.append(match)
+                continue
+            replacements[match] = rep
+            newReplacements += 1
+            contents = sub(match, rep, contents)
+    outfile.write(contents)
     print("Performed {} replacements in {}.".format(replaceCount, filename))
 
 if newReplacements:
